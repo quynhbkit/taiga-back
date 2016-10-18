@@ -1972,28 +1972,32 @@ def test_membership_create(client, data):
     ]
 
     membership_data = serializers.MembershipSerializer(data.public_membership).data
-    membership_data["id"] = None
+    del(membership_data["id"])
+    del(membership_data["user"])
     membership_data["email"] = "test1@test.com"
     membership_data = json.dumps(membership_data)
     results = helper_test_http_method(client, 'post', url, membership_data, users)
     assert results == [401, 403, 403, 403, 201]
 
     membership_data = serializers.MembershipSerializer(data.private_membership1).data
-    membership_data["id"] = None
+    del(membership_data["id"])
+    del(membership_data["user"])
     membership_data["email"] = "test2@test.com"
     membership_data = json.dumps(membership_data)
     results = helper_test_http_method(client, 'post', url, membership_data, users)
     assert results == [401, 403, 403, 403, 201]
 
     membership_data = serializers.MembershipSerializer(data.private_membership2).data
-    membership_data["id"] = None
+    del(membership_data["id"])
+    del(membership_data["user"])
     membership_data["email"] = "test3@test.com"
     membership_data = json.dumps(membership_data)
     results = helper_test_http_method(client, 'post', url, membership_data, users)
     assert results == [401, 403, 403, 403, 201]
 
     membership_data = serializers.MembershipSerializer(data.blocked_membership).data
-    membership_data["id"] = None
+    del(membership_data["id"])
+    del(membership_data["user"])
     membership_data["email"] = "test4@test.com"
     membership_data = json.dumps(membership_data)
     results = helper_test_http_method(client, 'post', url, membership_data, users)

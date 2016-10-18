@@ -39,6 +39,62 @@ def test_get_members_from_bulk():
     assert members[1].email == "member2@email.com"
 
 
+def test_create_member_using_email(client):
+    project = f.ProjectFactory()
+    john = f.UserFactory.create()
+    joseph = f.UserFactory.create()
+    tester = f.RoleFactory(project=project, name="Tester")
+    f.MembershipFactory(project=project, user=john, is_admin=True)
+    url = reverse("memberships-list")
+
+    data = {"project": project.id, "role": tester.pk, "email": joseph.email}
+    client.login(john)
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 201
+    assert response.data["email"] == joseph.email
+
+
+def test_create_member_using_id_without_being_contacts(client):
+    project = f.ProjectFactory()
+    john = f.UserFactory.create()
+    joseph = f.UserFactory.create()
+    tester = f.RoleFactory(project=project, name="Tester")
+    f.MembershipFactory(project=project, user=john, is_admin=True)
+    url = reverse("memberships-list")
+
+    data = {"project": project.id, "role": tester.pk, "user": joseph.id}
+    client.login(john)
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 400
+    print(response.data)
+    assert "The user must be a valid contact" in response.data["user"][0]
+
+
+def test_create_member_using_id_being_contacts(client):
+    project = f.ProjectFactory()
+    john = f.UserFactory.create()
+    joseph = f.UserFactory.create()
+    tester = f.RoleFactory(project=project, name="Tester", permissions=["view_project"])
+    f.MembershipFactory(project=project, user=john, role=tester, is_admin=True)
+
+    # They are members from another project
+    project2 = f.ProjectFactory()
+    gamer = f.RoleFactory(project=project2, name="Gamer", permissions=["view_project"])
+    f.MembershipFactory(project=project2, user=john, role=gamer, is_admin=True)
+    f.MembershipFactory(project=project2, user=joseph, role=gamer)
+
+    url = reverse("memberships-list")
+
+    data = {"project": project.id, "role": tester.pk, "user": joseph.id}
+    client.login(john)
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 201
+    assert response.data["user"] == joseph.id
+
+
 def test_create_members_in_bulk():
     with mock.patch("taiga.projects.services.members.db") as db:
         data = [{"role_id": "1", "email": "member1@email.com"},
@@ -364,7 +420,7 @@ def test_api_invite_existing_user(client, outbox):
     assert "Added to the project" in message.subject
 
 
-def test_api_create_invalid_membership_email_failing(client):
+def test_api_create_invalid_membership_no_email_no_user(client):
     "Should not create the invitation linked to that user"
     user = f.UserFactory.create()
     role = f.RoleFactory.create()
@@ -517,8 +573,17 @@ def test_api_edit_membership(client):
     url = reverse("memberships-detail", args=[membership.id])
     data = {"email": "new@email.com"}
     response = client.json.patch(url, json.dumps(data))
-
     assert response.status_code == 200
+
+
+def test_api_edit_membership(client):
+    membership = f.MembershipFactory(is_admin=True)
+    client.login(membership.user)
+    url = reverse("memberships-detail", args=[membership.id])
+    data = {"email": "new@email.com"}
+    response = client.json.patch(url, json.dumps(data))
+    assert response.status_code == 200
+
 
 def test_api_change_owner_membership_to_no_admin_return_error(client):
     project = f.ProjectFactory()
