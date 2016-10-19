@@ -79,7 +79,7 @@ class BaseRouter(object):
     @property
     def urls(self):
         if not hasattr(self, '_urls'):
-            self._urls = ['', *self.get_urls()]
+            self._urls = self.get_urls()
         return self._urls
 
 
