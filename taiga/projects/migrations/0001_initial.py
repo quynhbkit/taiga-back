@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import models, migrations
 from django.conf import settings
-import django_pgjson.fields
+import django.contrib.postgres.fields
 import django.utils.timezone
 import django.db.models.deletion
 import djorm_pgarray.fields

@@ -817,8 +817,18 @@ class ModelSerializer((six.with_metaclass(SerializerMetaclass, BaseSerializer)))
         else:
             # Reverse relationships are only included if they are explicitly
             # present in the `fields` option on the serializer
-            reverse_rels = opts.get_all_related_objects()
-            reverse_rels += opts.get_all_related_many_to_many_objects()
+
+            # NOTE: Rewrite after Django 1.10 upgrade.
+            #       See https://docs.djangoproject.com/es/1.10/ref/models/meta/#migrating-from-the-old-api
+            reverse_rels = [
+                f for f in opts.get_fields()
+                if (f.one_to_many or f.one_to_one)
+                and f.auto_created and not f.concrete
+            ]
+            reverse_rels += [
+                f for f in opts.get_fields(include_hidden=True)
+                if f.many_to_many and f.auto_created
+            ]
 
         for relation in reverse_rels:
             accessor_name = relation.get_accessor_name()

@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 import django.contrib.postgres.fields
 from django.db import migrations, models
 import django.db.models.deletion
-import django_pgjson.fields
+import django.contrib.postgres.fields
 
 
 class Migration(migrations.Migration):
@@ -71,7 +71,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='projecttemplate',
             name='epic_statuses',
-            field=django_pgjson.fields.JsonField(blank=True, null=True, verbose_name='epic statuses'),
+            field=django.contrib.postgres.fields.JSONField(blank=True, null=True, verbose_name='epic statuses'),
         ),
         migrations.AddField(
             model_name='projecttemplate',

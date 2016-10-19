@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import django_pgjson.fields
+import django.contrib.postgres.fields
 
 
 class Migration(migrations.Migration):
@@ -21,13 +21,13 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='webhooklog',
             name='request_data',
-            field=django_pgjson.fields.JsonField(verbose_name='request data'),
+            field=django.contrib.postgres.fields.JSONField(verbose_name='request data'),
             preserve_default=True,
         ),
         migrations.AlterField(
             model_name='webhooklog',
             name='request_headers',
-            field=django_pgjson.fields.JsonField(verbose_name='request headers', default={}),
+            field=django.contrib.postgres.fields.JSONField(verbose_name='request headers', default={}),
             preserve_default=True,
         ),
         migrations.AlterField(
@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='webhooklog',
             name='response_headers',
-            field=django_pgjson.fields.JsonField(verbose_name='response headers', default={}),
+            field=django.contrib.postgres.fields.JSONField(verbose_name='response headers', default={}),
             preserve_default=True,
         ),
         migrations.AlterField(

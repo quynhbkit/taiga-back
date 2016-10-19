@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import django_pgjson.fields
+import django.contrib.postgres.fields
 
 
 class Migration(migrations.Migration):
@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='project',
             name='modules_config',
-            field=django_pgjson.fields.JsonField(blank=True, null=True, verbose_name='modules config'),
+            field=django.contrib.postgres.fields.JSONField(blank=True, null=True, verbose_name='modules config'),
             preserve_default=True,
         ),
     ]
