@@ -5,6 +5,8 @@ from django.db import models, migrations
 import datetime
 import django.contrib.postgres.fields
 
+from django.utils import timezone
+
 
 class Migration(migrations.Migration):
 
@@ -16,7 +18,9 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='webhooklog',
             name='created',
-            field=models.DateTimeField(default=datetime.datetime(2015, 1, 22, 10, 21, 17, 188643), auto_now_add=True),
+            field=models.DateTimeField(
+                default=datetime.datetime(2015, 1, 22, 10, 21, 17, 188643, timezone.get_default_timezone()),
+                auto_now_add=True),
             preserve_default=False,
         ),
         migrations.AddField(
